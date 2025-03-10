@@ -1,25 +1,56 @@
 #include <iostream>
+#include <vector>
+#include <fstream>
+#include <string>
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+int extractMap(std::vector<std::string> &map);
+int displayMap(std::vector<std::string> &map);
+
 int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
-    // <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
 
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
-        // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
-        // breakpoint for you, but you can always add more by pressing
-        // <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
+    std::vector<std::string> map; // The map
+
+    if (extractMap(map) != 0) return -1;
+
+    displayMap(map);
+
+    return 0;
+}
+
+int extractMap(std::vector<std::string> &map) {
+    if (std::ifstream fileBoard("board.txt"); fileBoard.is_open()) {
+        std::string line;
+        while (getline(fileBoard, line)) {
+            map.push_back(line);
+        }
+    } else {
+        std::cout << "The file \"board.txt\" is missing." << std::endl;
+        return -1;
+    }
+
+    int error = 0;
+    if (map.empty() || map.size() != 25) error = 1;
+    for (const auto &line : map) {
+        if (line.size() != 25) {
+            error = 1;
+        }
+    }
+    if (error) {
+        std::cout << "The board must be 25*25 with the letter \'~\' for water and \'#\' for your ships." << std::endl;
+        return -1;
     }
 
     return 0;
 }
 
-// TIP See CLion help at <a
-// href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>.
-//  Also, you can try interactive lessons for CLion by selecting
-//  'Help | Learn IDE Features' from the main menu.
+int displayMap(std::vector<std::string> &map) {
+
+    std::cout << "   ABCDEFGHIJKLMNOPKRSTUVWXY" << std::endl;
+    for (int i = 0; i < map.size(); i++) {
+        std::cout << i+1 << " ";
+        if (i < 9) std::cout << " ";
+        std::cout << map.at(i) << std::endl;
+    }
+
+    return 0;
+}
